@@ -97,6 +97,9 @@ def cancel():
         flash("Reservering niet gevonden.", "danger")
         return redirect(url_for('index'))
 
+with app.app_context():
+    db.create_all()
+    print("Database tables aangemaakt!")
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
