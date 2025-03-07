@@ -13,10 +13,11 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-# Email Configuratie
+# Email Configuratie voor Hotmail/Outlook
 app.config['MAIL_SERVER'] = 'smtp.office365.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_USERNAME'] = 'demi1936@hotmail.com'
 app.config['MAIL_PASSWORD'] = 'Mailvandemi07'
 mail = Mail(app)
@@ -42,10 +43,6 @@ rooms = {
     "Gebouw 27, verdieping 1": ["1113", "1114", "1119", "1120", "1129", "1128"]
 }
 
-@app.before_first_request
-def create_tables():
-    db.create_all()
-
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
@@ -65,7 +62,7 @@ def index():
         db.session.commit()
 
         if email:
-            msg = Message('Bevestiging reservering', sender='your_email@example.com', recipients=[email])
+            msg = Message('Bevestiging reservering', sender='demi1936@hotmail.com', recipients=[email])
             msg.body = f"Bedankt {name}, je hebt succesvol een bed gereserveerd in kamer {room_number} voor de shift {shift}."
             mail.send(msg)
 
@@ -101,4 +98,6 @@ def cancel():
         return redirect(url_for('index'))
 
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
     app.run(host='0.0.0.0', port=5000, debug=True)
